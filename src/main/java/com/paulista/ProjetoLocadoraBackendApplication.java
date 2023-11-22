@@ -12,6 +12,7 @@ import com.paulista.model.Diretor;
 import com.paulista.model.Item;
 import com.paulista.model.Socio;
 import com.paulista.model.Titulo;
+import com.paulista.model.Locacao;
 import com.paulista.repository.AtorRepository;
 import com.paulista.repository.ClasseRepository;
 import com.paulista.repository.ClienteRepository;
@@ -19,6 +20,7 @@ import com.paulista.repository.DiretorRepository;
 import com.paulista.repository.ItemRepository;
 import com.paulista.repository.SocioRepository;
 import com.paulista.repository.TituloRepository;
+import com.paulista.repository.LocacaoRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ public class ProjetoLocadoraBackendApplication {
 								   TituloRepository tituloRepository,
 								   ItemRepository itemRepository,
 								   ClienteRepository clienteRepository,
-								   SocioRepository socioRepository) {
+								   SocioRepository socioRepository,
+								   LocacaoRepository locacaoRepository) {
 		return args -> {
 
 			//--------------------------------------------------------
@@ -196,6 +199,23 @@ public class ProjetoLocadoraBackendApplication {
 			socio1.setEstahAtivo("Sim");
 
 
+			//--------------------------------------------------------
+			//Locacao
+			Locacao locacao1 = new Locacao();
+			locacao1.setDataLocacao(LocalDate.of(2023, 11, 10));
+			locacao1.setDataDevolucaoPrevista(LocalDate.of(2023, 11, 15));
+			locacao1.setClientes(cliente1);
+			
+			List<Item> listaAlugados1 = new ArrayList<>();
+
+			listaAlugados1.add(item2);
+
+			locacao1.setAlugados(listaAlugados1);
+
+			locacao1.setValorCobrado(8.00);
+			locacao1.setDataDevolucaoEfetiva(LocalDate.now());
+			locacao1.setMultaCobrada(5.00);
+
 
 			//--------------------------------------------------------
 			//Ator
@@ -244,6 +264,10 @@ public class ProjetoLocadoraBackendApplication {
 			//Sócio
 			socioRepository.save(socio1);
 
+
+			//--------------------------------------------------------
+			//Locação
+			locacaoRepository.save(locacao1);
 
 		};
 	}
