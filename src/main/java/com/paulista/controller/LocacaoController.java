@@ -2,6 +2,7 @@ package com.paulista.controller;
 
 import lombok.AllArgsConstructor;
 
+import org.hibernate.annotations.common.util.impl.Log_.logger;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,7 +79,7 @@ public class LocacaoController {
     }
 
     //Editar
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     /*@Operation(description = "Edita a locacao criada.", responses = {
         @ApiResponse(responseCode = "200", description = "Caso a locacao seja editada."),
         @ApiResponse(responseCode = "400", description = "O servidor não pode processar a requisição devido a alguma coisa que foi entendida como um erro do cliente."),
@@ -100,22 +101,23 @@ public class LocacaoController {
     }
 
     //Deletar
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     /*@Operation(description = "Deleta a locação informada.", responses = {
         @ApiResponse(responseCode = "200", description = "Caso a locação seja deletada."),
         @ApiResponse(responseCode = "400", description = "O servidor não pode processar a requisição devido a alguma coisa que foi entendida como um erro do cliente."),
         @ApiResponse(responseCode = "500", description = "Caso não tenha sido possível realizar a operação.")})
-    */public void deletar(@RequestParam Long id){
+    */public void deletar(@PathVariable Long id) {
         locacaoRepository.deleteById(id);
+
+        // Após a exclusão, reordene os IDs
+        List<Locacao> locacoes = locacaoRepository.findAll();
+        Long novoId = Long.valueOf(1);
+        for (Locacao locacao : locacoes) {
+            locacao.setId(novoId++);
+        }
+        locacaoRepository.saveAll(locacoes);
     }
 
-    /*@GetMapping("/ativasPorCliente/{clienteId}")
-    public ResponseEntity<List<Locacao>> locacoesAtivasPorCliente(
-        @PathVariable Long clienteId,
-        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataAtual) {
-    List<Locacao> locacoesAtivas = locacaoRepository.findLocacoesAtivasPorCliente(clienteId, dataAtual);
-    return ResponseEntity.ok(locacoesAtivas);
-    }*/
     @GetMapping("/clientes/{clienteId}")
     public ResponseEntity<List<Locacao>> locacoesPorCliente(
         @PathVariable Long clienteId,
