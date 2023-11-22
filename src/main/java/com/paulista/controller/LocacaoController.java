@@ -21,6 +21,7 @@ import com.paulista.model.Locacao;
 import com.paulista.repository.LocacaoRepository;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 /*import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,16 +48,22 @@ public class LocacaoController {
     }
 
     //Procurar o ID
-    @GetMapping("/{id}")
-    /*@Operation(description = "Procura as locações por id.", responses = {
+   /*  @GetMapping("/{id}")
+    @Operation(description = "Procura as locações por id.", responses = {
         @ApiResponse(responseCode = "200", description = "Caso as locações sejam encontradas."),
         @ApiResponse(responseCode = "400", description = "O servidor não pode processar a requisição devido a alguma coisa que foi entendida como um erro do cliente."),
         @ApiResponse(responseCode = "500", description = "Caso não tenha sido possível realizar a operação.")})
-    */public ResponseEntity<Locacao> procurarPorID(@PathVariable Long id) {
+    public ResponseEntity<Locacao> procurarPorID(@PathVariable Long id) {
         return locacaoRepository.findById(id)
                 .map(recordFound -> ResponseEntity.ok().body(recordFound))
                 .orElseThrow(() -> new RecursoNaoEncontradoException(recurso));
-    }
+    }*/
+    @GetMapping("/{id}")
+    public ResponseEntity<Locacao> procurarPorID(@PathVariable Long id) {
+        return locacaoRepository.findById(id)
+            .map(recordFound -> ResponseEntity.ok().body(recordFound))
+            .orElse(ResponseEntity.notFound().build());
+}
 
     //Criar
     @PostMapping
@@ -102,11 +109,23 @@ public class LocacaoController {
         locacaoRepository.deleteById(id);
     }
 
-    @GetMapping("/ativasPorCliente/{clienteId}")
+    /*@GetMapping("/ativasPorCliente/{clienteId}")
     public ResponseEntity<List<Locacao>> locacoesAtivasPorCliente(
         @PathVariable Long clienteId,
         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataAtual) {
     List<Locacao> locacoesAtivas = locacaoRepository.findLocacoesAtivasPorCliente(clienteId, dataAtual);
     return ResponseEntity.ok(locacoesAtivas);
+    }*/
+    @GetMapping("/clientes/{clienteId}")
+    public ResponseEntity<List<Locacao>> locacoesPorCliente(
+        @PathVariable Long clienteId,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date dataAtual) {
+        List<Locacao> locacoes = locacaoRepository.findLocacoesAtivasPorCliente(clienteId, dataAtual);
+
+        if (locacoes.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(locacoes);
     }
 }
