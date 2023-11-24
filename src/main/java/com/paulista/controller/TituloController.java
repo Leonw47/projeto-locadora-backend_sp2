@@ -45,6 +45,23 @@ public class TituloController {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(recurso));
     }
 
+    //Buscar Por Termo    
+    @GetMapping("/search")
+    public ResponseEntity<List<Titulo>> buscarPorTermo(@RequestParam String q) {
+        try {
+            // Aqui você pode chamar o método buscarPorTermo do repository
+            List<Titulo> titulosEncontrados = tituloRepository.buscarPorTermo(q);
+    
+            if (titulosEncontrados.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+    
+            return ResponseEntity.ok(titulosEncontrados);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     //Criar
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)

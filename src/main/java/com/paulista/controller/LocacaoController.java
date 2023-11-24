@@ -2,7 +2,7 @@ package com.paulista.controller;
 
 import lombok.AllArgsConstructor;
 
-import org.hibernate.annotations.common.util.impl.Log_.logger;
+import org.hibernate.annotations.common.util.impl.Log_$logger;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import com.paulista.model.Locacao;
 import com.paulista.repository.LocacaoRepository;
 
 import java.sql.Date;
-import java.time.LocalDate;
+
 
 /*import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,24 +47,13 @@ public class LocacaoController {
     */public List<Locacao> lista() {
         return locacaoRepository.findAll();
     }
-
-    //Procurar o ID
-   /*  @GetMapping("/{id}")
-    @Operation(description = "Procura as locações por id.", responses = {
-        @ApiResponse(responseCode = "200", description = "Caso as locações sejam encontradas."),
-        @ApiResponse(responseCode = "400", description = "O servidor não pode processar a requisição devido a alguma coisa que foi entendida como um erro do cliente."),
-        @ApiResponse(responseCode = "500", description = "Caso não tenha sido possível realizar a operação.")})
-    public ResponseEntity<Locacao> procurarPorID(@PathVariable Long id) {
-        return locacaoRepository.findById(id)
-                .map(recordFound -> ResponseEntity.ok().body(recordFound))
-                .orElseThrow(() -> new RecursoNaoEncontradoException(recurso));
-    }*/
+    //Buscar por ID
     @GetMapping("/{id}")
     public ResponseEntity<Locacao> procurarPorID(@PathVariable Long id) {
         return locacaoRepository.findById(id)
             .map(recordFound -> ResponseEntity.ok().body(recordFound))
             .orElse(ResponseEntity.notFound().build());
-}
+    }
 
     //Criar
     @PostMapping
